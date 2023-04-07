@@ -1,0 +1,24 @@
+EMAIL (%{USER}@%{HOSTNAME})
+EXIM_REMOTE_HOST (H=(%{NOTSPACE:remote_hostname} )?(\(%{NOTSPACE:remote_heloname}\) )?\[%{IP:remote_host}\])
+EXIM_INTERFACE (I=\[%{IP:exim_interface}\](:%{NUMBER:exim_interface_port}))
+EXIM_PROTOCOL (P=%{NOTSPACE:protocol})
+EXIM_MSG_SIZE (S=%{NUMBER:exim_msg_size})
+EXIM_HEADER_ID (id=%{NOTSPACE:exim_header_id})
+EXIM_SUBJECT (T=%{QS:exim_subject})
+EXIM_MSGID ([0-9A-Za-z]{6}-[0-9A-Za-z]{6}-[0-9A-Za-z]{2})
+EXIM_FLAG (<=|[-=>*]>|[*]{2}|==)
+EXIM_DATE %{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{TIME}
+EXIM_PID \[%{POSINT}\]
+EXIM_QT (QT=(%{NUMBER:exim_qt_d}d)?(%{NUMBER:exim_qt_h}h)?(%{NUMBER:exim_qt_m}m)?(%{NUMBER:exim_qt_s}s)?)
+EXIM_CV (CV=(?<exim_cert_verified>yes|no))
+EXIM_REMOTE_REPLY (C=%{QS:remote_reply})
+EXIM_DEF (\(%{NUMBER:exim_defer_code}\)( %{EXIM_REMOTE_HOST})?: %{GREEDYDATA:exim_defer_text})
+EXIM_EXCLUDE_TERMS (Message is frozen|(Start|End) queue run| Warning: | retry time not reached | no (IP address|host name) found for (IP address|host) | unexpected disconnection while reading SMTP command | no immediate delivery: |another process is handling this message | SSL verify error)
+EXIM_IN (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )(%{EXIM_FLAG:exim_flag} )(%{NOTSPACE:env_sender} )(%{EXIM_REMOTE_HOST} )?(%{EXIM_INTERFACE} )?(%{EXIM_PROTOCOL} )?(X=%{NOTSPACE:tls_info} )?(%{EXIM_CV} )?(A=%{NOTSPACE:authorization} )?(%{EXIM_MSG_SIZE} )(%{EXIM_HEADER_ID})?
+EXIM_OUT (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )(%{DATA:exim_flag} )(%{NOTSPACE:env_rcpt} )(<%{NOTSPACE:env_rcpt_outer}> )?(R=%{NOTSPACE:exim_router} )?(T=%{NOTSPACE:exim_transport})( %{EXIM_REMOTE_HOST} )?(X=%{NOTSPACE:tls_info} )?(CV=%{NOTSPACE:cert_verified} )?(%{DATA:remote_reply} )?(%{EXIM_QT})?
+EXIM_COMPL (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )(Completed)
+EXIM_FAIL (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )(%{EXIM_FLAG:exim_flag} )(%{EMAIL:env_rcpt})( <%{NOTSPACE:env_rcpt_outer}>)?( R=%{NOTSPACE:exim_router})?( T=%{NOTSPACE:exim_transport})?( %{EXIM_REMOTE_HOST})?( X=%{NOTSPACE:tls_info})?( %{EXIM_CV})?(: %{GREEDYDATA:fail_reason})
+EXIM_GREYLISTED (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )?(%{EXIM_REMOTE_HOST} )(X=%{NOTSPACE:tls_info} )?(CV=%{NOTSPACE:cert_verified} )(F=<%{NOTSPACE:env_from_outer}> )?(%{GREEDYDATA:fail_reason})
+EXIM_SPAM (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )?(%{EXIM_REMOTE_HOST} )(F=<%{NOTSPACE:env_from_outer}> )(%{GREEDYDATA:fail_reason})
+EXIM_DEFER (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )(%{DATA:exim_flag} )(%{DATA:env_rcpt} )(<%{NOTSPACE:env_rcpt_outer}> )?(R=%{NOTSPACE:exim_router} )?(T=%{NOTSPACE:exim_transport} )?((routing )?defer (\(%{NUMBER:exim_defer_code}\)( %{EXIM_REMOTE_HOST})?: %{GREEDYDATA:exim_defer_text}))
+EXIM_BOUNCE (%{SYSLOGBASE} )?(%{EXIM_DATE:exim_date} )?(%{EXIM_PID:exim_pid} )?(%{EXIM_MSGID:exim_msg_id} )(%{EXIM_FLAG:exim_flag} )(%{NOTSPACE:env_sender} )(R=%{NOTSPACE:exim_reference} )(U=%{USER} )(%{EXIM_PROTOCOL} )(%{EXIM_MSG_SIZE})
